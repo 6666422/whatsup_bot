@@ -1,0 +1,62 @@
+<html>
+<head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+  <title>jQuery Example</title>
+  <script>
+    $(document).ready(function() {
+      // Execute some code here
+    });
+  </script>
+</head>
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1747517598849091',
+      xfbml      : true,
+      version    : 'v2.6'
+    });
+    FB.getLoginStatus(function(response) {
+      var ui = response.authResponse.userID;
+      console.log(response);
+      FB.api(
+        '/' + ui,
+        'GET',
+        {"fields":"picture,name,first_name,last_name"},
+        function(response1) {
+            console.log(response1);
+            FB.api(
+              '/' + ui + '/friends',
+              'GET',
+              {},
+              function(response2) {
+                  console.log(response2);
+                  $.post("https://yesteapea.com/whatsup/appflow", 
+                        {
+                            friends: JSON.stringify(response2), 
+                            profile: JSON.stringify(response1), 
+                            user: ui
+                        });
+                  }); 
+              }
+      );
+   });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+
+</script>
+
+<!--fb:login-button 
+  scope="public_profile,email,user_friends"
+    onlogin="checkLoginState();"
+</fb:login-button-->
+<div class="fb-login-button" data-max-rows="1" data-size="xlarge"
+  data-show-faces="true" scope="user_friends,public_profile" data-auto-logout-link="false"></div>
